@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Code2, Github, Twitter, Linkedin, Mail } from "lucide-react";
+import { Code2, Github, Instagram, Linkedin, Mail } from "lucide-react";
 
 const footerLinks = {
   navigation: [
@@ -17,9 +17,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { href: "#", icon: Github, label: "GitHub" },
-  { href: "#", icon: Twitter, label: "Twitter" },
-  { href: "#", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://github.com/rs-ragul", icon: Github, label: "GitHub" },
+  { href: "https://www.instagram.com/rscreations.tech/", icon: Instagram, label: "Instagram" },
+  { href: "https://www.linkedin.com/in/ragulethicalhacker/", icon: Linkedin, label: "LinkedIn" },
   { href: "mailto:rscreations.tech@gmail.com", icon: Mail, label: "Email" },
 ];
 
