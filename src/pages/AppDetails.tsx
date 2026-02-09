@@ -147,6 +147,11 @@ const AppDetails = () => {
                 <p className="text-xl text-muted-foreground">
                   {app.title || app.short_description}
                 </p>
+                {!app.is_upcoming && (app.release_at || app.created_at) && (
+                  <p className="text-sm text-muted-foreground mt-3">
+                    Released: {formatRelease(app.release_at || app.created_at)}
+                  </p>
+                )}
               </div>
               {app.is_upcoming ? (
                 <Button size="lg" className="glow-primary" disabled>

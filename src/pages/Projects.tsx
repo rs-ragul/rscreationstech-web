@@ -65,21 +65,23 @@ const Projects = () => {
                   transition={{ duration: 0.5, delay: index * 0.05 }}
                   className="glass-card p-6 hover:border-primary/30 transition-all duration-300 group"
                 >
-                  {project.image_url && (
-                    <div className="mb-4 rounded-lg overflow-hidden">
-                      <img
-                        src={project.image_url}
-                        alt={project.name}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  )}
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                    {project.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                    {project.description || "A project built with modern technologies."}
-                  </p>
+                  <Link to={`/projects/${project.slug}`} className="block">
+                    {project.image_url && (
+                      <div className="mb-4 rounded-lg overflow-hidden">
+                        <img
+                          src={project.image_url}
+                          alt={project.name}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                    )}
+                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                      {project.name}
+                    </h3>
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                      {project.description || "A project built with modern technologies."}
+                    </p>
+                  </Link>
                   
                   {/* Tech Stack */}
                   {project.tech_stack && project.tech_stack.length > 0 && (

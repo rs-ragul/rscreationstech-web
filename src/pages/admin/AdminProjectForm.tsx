@@ -123,7 +123,7 @@ const AdminProjectForm = () => {
         className="flex items-center gap-4"
       >
         <Button variant="ghost" size="icon" asChild>
-          <Link to="/admin/projects">
+          <Link to="/rscraft/projects">
             <ArrowLeft className="w-5 h-5" />
           </Link>
         </Button>

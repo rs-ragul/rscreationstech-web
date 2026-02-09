@@ -68,7 +68,7 @@ const AdminProjects = () => {
           <p className="text-muted-foreground">Manage your projects</p>
         </div>
         <Button asChild className="glow-primary">
-          <Link to="/admin/projects/new">
+          <Link to="/rscraft/projects/new">
             <Plus className="w-4 h-4 mr-2" />
             Add New Project
           </Link>
