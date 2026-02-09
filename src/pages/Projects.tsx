@@ -81,6 +81,10 @@ const Projects = () => {
                     <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
                       {project.description || "A project built with modern technologies."}
                     </p>
+                    <div className="flex items-center text-primary text-sm font-medium">
+                      View Details
+                      <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </Link>
                   
                   {/* Tech Stack */}
