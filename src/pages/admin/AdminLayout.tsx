@@ -10,7 +10,6 @@ import {
   LogOut,
   Menu,
   X,
-  Code2,
   BarChart3,
   MessageSquare
 } from "lucide-react";
@@ -87,8 +86,12 @@ const AdminLayout = () => {
           {/* Logo */}
           <div className="p-6 border-b border-border">
             <Link to="/rscraft" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center">
-                <Code2 className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center">
+                <img
+                  src="/rscreationslogo.ico"
+                  alt="RS Creations Tech Logo"
+                  className="w-6 h-6"
+                />
               </div>
               <div>
                 <div className="font-semibold">Admin Panel</div>

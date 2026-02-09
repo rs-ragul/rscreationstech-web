@@ -27,6 +27,11 @@ const AppDetails = () => {
     }
   };
 
+  const formatRelease = (value?: string | null) => {
+    if (!value) return "";
+    return new Date(value).toLocaleString();
+  };
+
   const { data: app, isLoading: appLoading } = useQuery({
     queryKey: ["app", slug],
     queryFn: async () => {
@@ -143,17 +148,45 @@ const AppDetails = () => {
                   {app.title || app.short_description}
                 </p>
               </div>
-              {app.download_url && (
-                <Button 
-                  size="lg" 
-                  className="glow-primary"
-                  onClick={() => handleDownload(app.download_url!, app.name)}
-                >
+              {app.is_upcoming ? (
+                <Button size="lg" className="glow-primary" disabled>
                   <Download className="w-4 h-4 mr-2" />
-                  Download
+                  Coming Soon
                 </Button>
+              ) : (
+                app.download_url && (
+                  <Button 
+                    size="lg" 
+                    className="glow-primary"
+                    onClick={() => handleDownload(app.download_url!, app.name)}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                )
               )}
             </motion.div>
+
+            {app.is_upcoming && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="glass-card p-6 mb-8"
+              >
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <div className="text-sm text-primary font-medium mb-1">Upcoming Release</div>
+                    <div className="text-muted-foreground">
+                      {app.release_at ? formatRelease(app.release_at) : "Release date will be announced."}
+                    </div>
+                  </div>
+                  <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm">
+                    Coming Soon
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
             {/* Description */}
             {app.description && (

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Download, Code2 } from "lucide-react";
+import { ArrowRight, Sparkles, Download, Code2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
@@ -78,8 +78,12 @@ export function HeroSection() {
                 View Projects
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="lg">
-              <Link to="/contact">Contact Me</Link>
+            <Button asChild size="lg" className="glow-primary group">
+              <Link to="/contact">
+                <Mail className="w-4 h-4 mr-2" />
+                Contact Me
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
           </motion.div>
         </div>

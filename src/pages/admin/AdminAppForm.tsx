@@ -31,12 +31,23 @@ const AdminAppForm = () => {
     logo_url: "",
     version: "1.0.0",
     is_featured: false,
+    is_upcoming: false,
+    release_at: "",
   });
   const [newFeature, setNewFeature] = useState("");
   const [images, setImages] = useState<{ id?: string; image_url: string; alt_text: string }[]>([]);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [logoUploading, setLogoUploading] = useState(false);
   const [screenshotUploading, setScreenshotUploading] = useState(false);
+  const [appFile, setAppFile] = useState<File | null>(null);
+  const [appFileUploading, setAppFileUploading] = useState(false);
+
+  const toDateTimeLocal = (value: string) => {
+    if (!value) return "";
+    const date = new Date(value);
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+  };
 
   // Fetch app data if editing
   const { data: app, isLoading } = useQuery({
@@ -84,6 +95,8 @@ const AdminAppForm = () => {
         logo_url: app.logo_url || "",
         version: app.version || "1.0.0",
         is_featured: app.is_featured || false,
+        is_upcoming: app.is_upcoming || false,
+        release_at: app.release_at || "",
       });
     }
   }, [app]);
@@ -248,6 +261,42 @@ const AdminAppForm = () => {
     }
   };
 
+  const uploadAppFile = async () => {
+    if (!appFile) {
+      toast({
+        title: "Select a file first",
+        description: "Choose an app file to upload.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setAppFileUploading(true);
+      const safeName = appFile.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+      const fileName = `${Date.now()}-${safeName}`;
+      const filePath = `downloads/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("app-assets")
+        .upload(filePath, appFile);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from("app-assets").getPublicUrl(filePath);
+      setFormData((prev) => ({ ...prev, download_url: data.publicUrl }));
+      toast({ title: "App file uploaded successfully" });
+    } catch (error: any) {
+      toast({
+        title: "Failed to upload app file",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setAppFileUploading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
@@ -362,15 +411,72 @@ const AdminAppForm = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="download_url">Download URL</Label>
-              <Input
-                id="download_url"
-                value={formData.download_url}
-                onChange={(e) => setFormData({ ...formData, download_url: e.target.value })}
-                placeholder="https://..."
-              />
+              <Label htmlFor="is_upcoming">Release Status</Label>
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="is_upcoming"
+                  checked={formData.is_upcoming}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      is_upcoming: checked,
+                      download_url: checked ? "" : prev.download_url,
+                    }))
+                  }
+                />
+                <span className="text-sm text-muted-foreground">
+                  Mark as upcoming (no download yet)
+                </span>
+              </div>
             </div>
           </div>
+
+          {formData.is_upcoming ? (
+            <div className="space-y-2">
+              <Label htmlFor="release_at">Release Date & Time</Label>
+              <Input
+                id="release_at"
+                type="datetime-local"
+                value={toDateTimeLocal(formData.release_at)}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    release_at: e.target.value ? new Date(e.target.value).toISOString() : "",
+                  })
+                }
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="app_file">App File</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="app_file"
+                  type="file"
+                  onChange={(e) => setAppFile(e.target.files?.[0] || null)}
+                  disabled={appFileUploading}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={uploadAppFile}
+                  disabled={appFileUploading || !appFile}
+                >
+                  {appFileUploading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+              {formData.download_url && (
+                <p className="text-xs text-muted-foreground break-all">
+                  Current file: {formData.download_url}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>Logo</Label>

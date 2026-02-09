@@ -80,37 +80,43 @@ const Apps = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
                 >
-                  <Link
-                    to={`/apps/${app.slug}`}
-                    className="block glass-card p-6 h-full hover:border-primary/30 transition-all duration-300 group"
-                  >
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                        {app.logo_url ? (
-                          <img src={app.logo_url} alt={app.name} className="w-10 h-10 rounded-lg object-cover" />
-                        ) : (
-                          <Download className="w-8 h-8 text-primary" />
-                        )}
+                  <div className="glass-card p-6 h-full hover:border-primary/30 transition-all duration-300 group">
+                    <Link to={`/apps/${app.slug}`} className="block">
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                          {app.logo_url ? (
+                            <img src={app.logo_url} alt={app.name} className="w-10 h-10 rounded-lg object-cover" />
+                          ) : (
+                            <Download className="w-8 h-8 text-primary" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xl font-semibold mb-1 group-hover:text-primary transition-colors truncate">
+                            {app.name}
+                          </h3>
+                          {app.version && (
+                            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                              v{app.version}
+                            </span>
+                          )}
+                          {app.is_upcoming && (
+                            <span className="ml-2 text-xs text-primary bg-primary/10 border border-primary/30 px-2 py-0.5 rounded">
+                              Upcoming
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-xl font-semibold mb-1 group-hover:text-primary transition-colors truncate">
-                          {app.name}
-                        </h3>
-                        {app.version && (
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                            v{app.version}
-                          </span>
-                        )}
-                      </div>
+                      <p className="text-muted-foreground text-sm line-clamp-3">
+                        {app.short_description || "A powerful application built with modern technologies."}
+                      </p>
+                    </Link>
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
+                      <Link to={`/apps/${app.slug}`} className="flex items-center text-primary text-sm font-medium">
+                        View Details
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                     </div>
-                    <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                      {app.short_description || "A powerful application built with modern technologies."}
-                    </p>
-                    <div className="flex items-center text-primary text-sm font-medium">
-                      View Details
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </Link>
+                  </div>
                 </motion.div>
               ))}
             </div>

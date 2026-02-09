@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Code2, Github, Instagram, Linkedin, Mail } from "lucide-react";
+import { Github, Instagram, Linkedin, Mail } from "lucide-react";
 
 const footerLinks = {
   navigation: [
@@ -33,8 +33,12 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">
-                <Code2 className="w-5 h-5 text-primary" />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center">
+                <img
+                  src="/rscreationslogo.ico"
+                  alt="RS Creations Tech Logo"
+                  className="w-5 h-5"
+                />
               </div>
               <span className="font-semibold text-lg">RS Creations Tech</span>
             </Link>
@@ -42,16 +46,21 @@ export function Footer() {
               Building innovative software solutions and sharing knowledge with the developer community.
             </p>
             <div className="flex items-center gap-4">
-              {socialLinks.map((link) => (
+              {socialLinks.map((link) => {
+                const isExternal = link.href.startsWith("http");
+                return (
                 <a
                   key={link.label}
                   href={link.href}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noreferrer" : undefined}
                   className="w-9 h-9 rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
                   aria-label={link.label}
                 >
                   <link.icon className="w-4 h-4" />
                 </a>
-              ))}
+                );
+              })}
             </div>
           </div>
 
