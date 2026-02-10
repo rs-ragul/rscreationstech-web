@@ -30,6 +30,9 @@ const AdminAppForm = () => {
     download_url: "",
     logo_url: "",
     version: "1.0.0",
+    version_code: 1,
+    force_update: false,
+    changelog: "",
     is_featured: false,
     is_upcoming: false,
     release_at: "",
@@ -41,6 +44,7 @@ const AdminAppForm = () => {
   const [screenshotUploading, setScreenshotUploading] = useState(false);
   const [appFile, setAppFile] = useState<File | null>(null);
   const [appFileUploading, setAppFileUploading] = useState(false);
+  const [versionJsonUploading, setVersionJsonUploading] = useState(false);
 
   const toDateTimeLocal = (value: string) => {
     if (!value) return "";
@@ -94,12 +98,45 @@ const AdminAppForm = () => {
         download_url: app.download_url || "",
         logo_url: app.logo_url || "",
         version: app.version || "1.0.0",
+        version_code: 1,
+        force_update: false,
+        changelog: "",
         is_featured: app.is_featured || false,
         is_upcoming: app.is_upcoming || false,
         release_at: app.release_at || "",
       });
     }
   }, [app]);
+
+  useEffect(() => {
+    if (!app?.slug) return;
+    let isActive = true;
+
+    const loadVersionMetadata = async () => {
+      try {
+        const versionUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/app-assets/downloads/${app.slug}/version.json`;
+        const response = await fetch(versionUrl, { cache: "no-store" });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!isActive || !data) return;
+
+        setFormData((prev) => ({
+          ...prev,
+          version_code: typeof data.versionCode === "number" ? data.versionCode : prev.version_code,
+          force_update: typeof data.forceUpdate === "boolean" ? data.forceUpdate : prev.force_update,
+          changelog: typeof data.changelog === "string" ? data.changelog : prev.changelog,
+        }));
+      } catch (error) {
+        console.warn("Failed to load version.json:", error);
+      }
+    };
+
+    loadVersionMetadata();
+
+    return () => {
+      isActive = false;
+    };
+  }, [app?.slug]);
 
   useEffect(() => {
     if (appImages) {
@@ -123,12 +160,33 @@ const AdminAppForm = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const failWith = (label: string, error: any) => {
+        const message = error?.message || String(error);
+        throw new Error(`${label}: ${message}`);
+      };
+
+      const appPayload = {
+        name: formData.name,
+        slug: formData.slug,
+        title: formData.title,
+        short_description: formData.short_description,
+        description: formData.description,
+        instructions: formData.instructions,
+        features: formData.features,
+        download_url: formData.download_url,
+        logo_url: formData.logo_url,
+        version: formData.version,
+        is_featured: formData.is_featured,
+        is_upcoming: formData.is_upcoming,
+        release_at: formData.release_at ? formData.release_at : null,
+      };
+
       if (isEditing) {
         const { error } = await supabase
           .from("apps")
-          .update(formData)
+          .update(appPayload)
           .eq("id", id);
-        if (error) throw error;
+        if (error) failWith("Apps update failed", error);
 
         // Update images
         await supabase.from("app_images").delete().eq("app_id", id);
@@ -141,15 +199,21 @@ const AdminAppForm = () => {
               sort_order: index,
             }))
           );
-          if (imgError) throw imgError;
+          if (imgError) failWith("App images insert failed", imgError);
+        }
+
+        try {
+          await uploadVersionFile(formData.slug);
+        } catch (error) {
+          failWith("version.json upload failed", error);
         }
       } else {
         const { data, error } = await supabase
           .from("apps")
-          .insert([formData])
+          .insert([appPayload])
           .select()
           .single();
-        if (error) throw error;
+        if (error) failWith("Apps insert failed", error);
 
         // Add images
         if (images.length > 0) {
@@ -161,7 +225,13 @@ const AdminAppForm = () => {
               sort_order: index,
             }))
           );
-          if (imgError) throw imgError;
+          if (imgError) failWith("App images insert failed", imgError);
+        }
+
+        try {
+          await uploadVersionFile(formData.slug);
+        } catch (error) {
+          failWith("version.json upload failed", error);
         }
       }
     },
@@ -294,6 +364,73 @@ const AdminAppForm = () => {
       });
     } finally {
       setAppFileUploading(false);
+    }
+  };
+
+  const ensureAuthSession = async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    if (data.session) return data.session;
+
+    const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) throw refreshError;
+    if (!refreshed.session) {
+      throw new Error("Admin session expired. Please sign in again.");
+    }
+
+    return refreshed.session;
+  };
+
+  const buildVersionPayload = () => ({
+    versionCode: Number(formData.version_code) || 1,
+    versionName: formData.version || "",
+    downloadUrl: formData.download_url || "",
+    forceUpdate: !!formData.force_update,
+    changelog: formData.changelog || "",
+  });
+
+  const uploadVersionFile = async (slugValue: string) => {
+    if (!slugValue) return;
+
+    await ensureAuthSession();
+
+    const versionPath = `downloads/${slugValue}/version.json`;
+    const payload = JSON.stringify(buildVersionPayload(), null, 2);
+    const blob = new Blob([payload], { type: "application/json" });
+
+    const { error: uploadError } = await supabase.storage
+      .from("app-assets")
+      .upload(versionPath, blob, {
+        contentType: "application/json",
+        cacheControl: "60",
+        upsert: true,
+      });
+
+    if (uploadError) throw uploadError;
+  };
+
+  const updateVersionJson = async () => {
+    if (!formData.slug) {
+      toast({
+        title: "Missing slug",
+        description: "Enter a slug before updating version.json.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setVersionJsonUploading(true);
+      await uploadVersionFile(formData.slug);
+      toast({ title: "version.json updated" });
+    } catch (error: any) {
+      toast({
+        title: "Failed to update version.json",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setVersionJsonUploading(false);
     }
   };
 
@@ -431,6 +568,54 @@ const AdminAppForm = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="version_code">Version Code</Label>
+              <Input
+                id="version_code"
+                type="number"
+                min={1}
+                value={formData.version_code}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    version_code: Number(e.target.value) || 1,
+                  })
+                }
+                placeholder="1"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="force_update">Force Update</Label>
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="force_update"
+                  checked={formData.force_update}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      force_update: checked,
+                    }))
+                  }
+                />
+                <span className="text-sm text-muted-foreground">
+                  Require users to update
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="changelog">Changelog</Label>
+            <Textarea
+              id="changelog"
+              value={formData.changelog}
+              onChange={(e) => setFormData({ ...formData, changelog: e.target.value })}
+              placeholder="Short update notes for in-app updates"
+              rows={3}
+            />
+          </div>
+
           {formData.is_upcoming ? (
             <div className="space-y-2">
               <Label htmlFor="release_at">Release Date & Time</Label>
@@ -505,6 +690,53 @@ const AdminAppForm = () => {
               onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
             />
             <Label htmlFor="is_featured">Featured App</Label>
+          </div>
+        </div>
+
+        {/* Version JSON */}
+        <div className="glass-card p-6 space-y-4">
+          <h2 className="text-lg font-semibold">Version JSON</h2>
+          <p className="text-sm text-muted-foreground">
+            Public URL:{" "}
+            {formData.slug ? (
+              <a
+                href={`/apps/${formData.slug}/version.json`}
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
+                /apps/{formData.slug}/version.json
+              </a>
+            ) : (
+              <span>/apps/&lt;slug&gt;/version.json</span>
+            )}
+          </p>
+          <Textarea
+            value={JSON.stringify(buildVersionPayload(), null, 2)}
+            readOnly
+            rows={8}
+            className="font-mono text-xs"
+          />
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={updateVersionJson}
+              disabled={!formData.slug || versionJsonUploading}
+            >
+              {versionJsonUploading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Update version.json"
+              )}
+            </Button>
+            {formData.slug && (
+              <Button type="button" variant="ghost" asChild>
+                <a href={`/apps/${formData.slug}/version.json`} target="_blank" rel="noreferrer">
+                  Open version.json
+                </a>
+              </Button>
+            )}
           </div>
         </div>
 

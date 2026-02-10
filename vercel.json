@@ -1,5 +1,9 @@
 {
   "rewrites": [
+    {
+      "source": "/apps/:slug/version.json",
+      "destination": "https://lnvlnwdzciairctnlodz.supabase.co/storage/v1/object/public/app-assets/downloads/:slug/version.json"
+    },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
