@@ -120,12 +120,16 @@ const AdminAppForm = () => {
         const data = await response.json();
         if (!isActive || !data) return;
 
+        const apkUrlFromJson = typeof data.apkUrl === "string" ? data.apkUrl : "";
+        const downloadUrlFromJson = typeof data.downloadUrl === "string" ? data.downloadUrl : "";
+        const legacyApkUrl = downloadUrlFromJson.endsWith(".apk") ? downloadUrlFromJson : "";
+
         setFormData((prev) => ({
           ...prev,
           version_code: typeof data.versionCode === "number" ? data.versionCode : prev.version_code,
           force_update: typeof data.forceUpdate === "boolean" ? data.forceUpdate : prev.force_update,
           changelog: typeof data.changelog === "string" ? data.changelog : prev.changelog,
-          apk_url: typeof data.downloadUrl === "string" ? data.downloadUrl : prev.apk_url,
+          apk_url: apkUrlFromJson || legacyApkUrl || prev.apk_url,
         }));
       } catch (error) {
         console.warn("Failed to load version.json:", error);
@@ -394,7 +398,13 @@ const AdminAppForm = () => {
   const buildVersionPayload = () => ({
     versionCode: Number(formData.version_code) || 1,
     versionName: formData.version || "",
-    downloadUrl: formData.apk_url || "",
+    downloadUrl:
+      formData.slug && typeof window !== "undefined"
+        ? `${window.location.origin}/apps/${formData.slug}`
+        : formData.slug
+          ? `/apps/${formData.slug}`
+          : "",
+    apkUrl: formData.apk_url || "",
     forceUpdate: !!formData.force_update,
     changelog: formData.changelog || "",
   });

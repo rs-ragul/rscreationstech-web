@@ -77,11 +77,16 @@ const AppDetails = () => {
 
   const fallbackDownloadUrl =
     app?.download_url && /^https?:\/\//.test(app.download_url) ? app.download_url : "";
-  const versionDownloadUrl =
+  const versionApkUrl =
+    typeof (versionInfo as { apkUrl?: unknown } | null)?.apkUrl === "string"
+      ? (versionInfo as { apkUrl: string }).apkUrl
+      : "";
+  const legacyVersionDownloadUrl =
     typeof (versionInfo as { downloadUrl?: unknown } | null)?.downloadUrl === "string"
       ? (versionInfo as { downloadUrl: string }).downloadUrl
       : "";
-  const downloadUrl = versionDownloadUrl || fallbackDownloadUrl;
+  const legacyApkUrl = legacyVersionDownloadUrl.endsWith(".apk") ? legacyVersionDownloadUrl : "";
+  const downloadUrl = versionApkUrl || legacyApkUrl || fallbackDownloadUrl;
 
   if (appLoading) {
     return (
