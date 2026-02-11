@@ -27,7 +27,7 @@ const AdminAppForm = () => {
     description: "",
     instructions: "",
     features: [] as string[],
-    download_url: "",
+    apk_url: "",
     logo_url: "",
     version: "1.0.0",
     version_code: 1,
@@ -95,7 +95,7 @@ const AdminAppForm = () => {
         description: app.description || "",
         instructions: app.instructions || "",
         features: app.features || [],
-        download_url: app.download_url || "",
+        apk_url: "",
         logo_url: app.logo_url || "",
         version: app.version || "1.0.0",
         version_code: 1,
@@ -125,6 +125,7 @@ const AdminAppForm = () => {
           version_code: typeof data.versionCode === "number" ? data.versionCode : prev.version_code,
           force_update: typeof data.forceUpdate === "boolean" ? data.forceUpdate : prev.force_update,
           changelog: typeof data.changelog === "string" ? data.changelog : prev.changelog,
+          apk_url: typeof data.downloadUrl === "string" ? data.downloadUrl : prev.apk_url,
         }));
       } catch (error) {
         console.warn("Failed to load version.json:", error);
@@ -173,7 +174,7 @@ const AdminAppForm = () => {
         description: formData.description,
         instructions: formData.instructions,
         features: formData.features,
-        download_url: formData.download_url,
+        download_url: formData.slug ? `/apps/${formData.slug}` : null,
         logo_url: formData.logo_url,
         version: formData.version,
         is_featured: formData.is_featured,
@@ -354,7 +355,7 @@ const AdminAppForm = () => {
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from("app-assets").getPublicUrl(filePath);
-      setFormData((prev) => ({ ...prev, download_url: data.publicUrl }));
+      setFormData((prev) => ({ ...prev, apk_url: data.publicUrl }));
       toast({ title: "App file uploaded successfully" });
     } catch (error: any) {
       toast({
@@ -384,7 +385,7 @@ const AdminAppForm = () => {
   const buildVersionPayload = () => ({
     versionCode: Number(formData.version_code) || 1,
     versionName: formData.version || "",
-    downloadUrl: formData.download_url || "",
+    downloadUrl: formData.apk_url || "",
     forceUpdate: !!formData.force_update,
     changelog: formData.changelog || "",
   });
@@ -557,7 +558,7 @@ const AdminAppForm = () => {
                     setFormData((prev) => ({
                       ...prev,
                       is_upcoming: checked,
-                      download_url: checked ? "" : prev.download_url,
+                      apk_url: checked ? "" : prev.apk_url,
                     }))
                   }
                 />
@@ -633,7 +634,7 @@ const AdminAppForm = () => {
             </div>
           ) : (
             <div className="space-y-2">
-              <Label htmlFor="app_file">App File</Label>
+              <Label htmlFor="app_file">APK File (for updates)</Label>
               <div className="flex gap-2">
                 <Input
                   id="app_file"
@@ -655,9 +656,9 @@ const AdminAppForm = () => {
                   )}
                 </Button>
               </div>
-              {formData.download_url && (
+              {formData.apk_url && (
                 <p className="text-xs text-muted-foreground break-all">
-                  Current file: {formData.download_url}
+                  Current file: {formData.apk_url}
                 </p>
               )}
             </div>

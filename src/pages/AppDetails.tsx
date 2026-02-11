@@ -32,6 +32,13 @@ const AppDetails = () => {
     return new Date(value).toLocaleString();
   };
 
+  const fetchVersionInfo = async (slugValue: string) => {
+    const versionUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/app-assets/downloads/${slugValue}/version.json`;
+    const response = await fetch(versionUrl, { cache: "no-store" });
+    if (!response.ok) return null;
+    return response.json();
+  };
+
   const { data: app, isLoading: appLoading } = useQuery({
     queryKey: ["app", slug],
     queryFn: async () => {
@@ -44,6 +51,12 @@ const AppDetails = () => {
       if (error) throw error;
       return data;
     },
+    enabled: !!slug,
+  });
+
+  const { data: versionInfo } = useQuery({
+    queryKey: ["app-version", slug],
+    queryFn: () => fetchVersionInfo(slug!),
     enabled: !!slug,
   });
 
@@ -61,6 +74,14 @@ const AppDetails = () => {
     },
     enabled: !!app?.id,
   });
+
+  const fallbackDownloadUrl =
+    app?.download_url && /^https?:\/\//.test(app.download_url) ? app.download_url : "";
+  const versionDownloadUrl =
+    typeof (versionInfo as { downloadUrl?: unknown } | null)?.downloadUrl === "string"
+      ? (versionInfo as { downloadUrl: string }).downloadUrl
+      : "";
+  const downloadUrl = versionDownloadUrl || fallbackDownloadUrl;
 
   if (appLoading) {
     return (
@@ -159,11 +180,11 @@ const AppDetails = () => {
                   Coming Soon
                 </Button>
               ) : (
-                app.download_url && (
+                downloadUrl && (
                   <Button 
                     size="lg" 
                     className="glow-primary"
-                    onClick={() => handleDownload(app.download_url!, app.name)}
+                    onClick={() => handleDownload(downloadUrl, app.name)}
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Download
