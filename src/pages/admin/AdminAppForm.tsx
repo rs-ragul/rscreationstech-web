@@ -341,6 +341,15 @@ const AdminAppForm = () => {
       });
       return;
     }
+    const lowerName = appFile.name.toLowerCase();
+    if (!lowerName.endsWith(".apk")) {
+      toast({
+        title: "Invalid file type",
+        description: "Only .apk files are allowed for app updates.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       setAppFileUploading(true);
@@ -639,6 +648,7 @@ const AdminAppForm = () => {
                 <Input
                   id="app_file"
                   type="file"
+                  accept=".apk"
                   onChange={(e) => setAppFile(e.target.files?.[0] || null)}
                   disabled={appFileUploading}
                   className="flex-1"
