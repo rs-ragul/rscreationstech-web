@@ -9,14 +9,50 @@ import { supabase } from "@/integrations/supabase/client";
 const AppDetails = () => {
   const { slug } = useParams<{ slug: string }>();
 
+  const sanitizeFileName = (name: string) => {
+    return name.replace(/[\\/:*?"<>|]+/g, "-").trim();
+  };
+
+  const getFileNameFromDisposition = (contentDisposition: string | null) => {
+    if (!contentDisposition) return "";
+
+    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]).trim();
+    }
+
+    const simpleMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    return simpleMatch?.[1]?.trim() || "";
+  };
+
+  const getFileNameFromUrl = (downloadUrl: string) => {
+    try {
+      const parsedUrl = new URL(downloadUrl, window.location.origin);
+      const segments = parsedUrl.pathname.split("/").filter(Boolean);
+      const lastSegment = segments[segments.length - 1] || "";
+      return decodeURIComponent(lastSegment).trim();
+    } catch {
+      return "";
+    }
+  };
+
+  const ensureApkExtension = (fileName: string, appName: string) => {
+    const candidate = sanitizeFileName(fileName || appName || "download");
+    return candidate.toLowerCase().endsWith(".apk") ? candidate : `${candidate}.apk`;
+  };
+
   const handleDownload = async (downloadUrl: string, appName: string) => {
     try {
       const response = await fetch(downloadUrl);
+      if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = appName || 'download';
+      const fileNameFromHeader = getFileNameFromDisposition(response.headers.get("content-disposition"));
+      const fileNameFromUrl = getFileNameFromUrl(downloadUrl);
+      link.download = ensureApkExtension(fileNameFromHeader || fileNameFromUrl, appName);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
