@@ -37,7 +37,7 @@ const AppDetails = () => {
   };
 
   const ensureApkExtension = (fileName: string, appName: string) => {
-    const candidate = sanitizeFileName(fileName || appName || "download");
+    const candidate = sanitizeFileName(fileName || appName || "download").replace(/^(\d{6,}[-_\s]*)+/, "");
     return candidate.toLowerCase().endsWith(".apk") ? candidate : `${candidate}.apk`;
   };
 

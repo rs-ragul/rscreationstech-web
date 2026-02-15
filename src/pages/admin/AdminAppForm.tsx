@@ -359,7 +359,7 @@ const AdminAppForm = () => {
       setAppFileUploading(true);
       const normalizedName = (() => {
         const baseName = appFile.name.split(/[\\/]/).pop() || appFile.name;
-        const withoutTimestamp = baseName.replace(/^\d{10,}-/, "");
+        const withoutTimestamp = baseName.replace(/^(\d{6,}[-_\s]*)+/, "");
         const trimmed = withoutTimestamp.trim();
         return trimmed.toLowerCase().endsWith(".apk") ? trimmed : `${trimmed}.apk`;
       })();
@@ -658,6 +658,7 @@ const AdminAppForm = () => {
           ) : (
             <div className="space-y-2">
               <Label htmlFor="app_file">APK File (for updates)</Label>
+              <p className="text-xs text-muted-foreground">Upload APK or provide a download link below (optional).</p>
               <div className="flex gap-2">
                 <Input
                   id="app_file"
@@ -685,6 +686,16 @@ const AdminAppForm = () => {
                   Current file: {formData.apk_url}
                 </p>
               )}
+              <div className="space-y-2">
+                <Label htmlFor="apk_url">Download Link (optional)</Label>
+                <Input
+                  id="apk_url"
+                  type="text"
+                  value={formData.apk_url}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, apk_url: e.target.value.trim() }))}
+                  placeholder="https://example.com/Belora.apk"
+                />
+              </div>
             </div>
           )}
 
