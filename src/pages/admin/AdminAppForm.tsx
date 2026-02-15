@@ -357,13 +357,17 @@ const AdminAppForm = () => {
 
     try {
       setAppFileUploading(true);
-      const safeName = appFile.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
-      const fileName = `${Date.now()}-${safeName}`;
-      const filePath = `downloads/${fileName}`;
+      const normalizedName = (() => {
+        const baseName = appFile.name.split(/[\\/]/).pop() || appFile.name;
+        const withoutTimestamp = baseName.replace(/^\d{10,}-/, "");
+        const trimmed = withoutTimestamp.trim();
+        return trimmed.toLowerCase().endsWith(".apk") ? trimmed : `${trimmed}.apk`;
+      })();
+      const filePath = `downloads/${normalizedName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("app-assets")
-        .upload(filePath, appFile);
+        .upload(filePath, appFile, { upsert: true });
 
       if (uploadError) throw uploadError;
 
