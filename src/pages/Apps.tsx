@@ -80,7 +80,7 @@ const Apps = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
                 >
-                  <div className="glass-card p-6 h-full hover:border-primary/30 transition-all duration-300 group">
+                  <div className="glass-card p-6 h-full group glass-card-hover">
                     <Link to={`/apps/${app.slug}`} className="block">
                       <div className="flex items-start gap-4 mb-4">
                         <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
@@ -111,9 +111,9 @@ const Apps = () => {
                       </p>
                     </Link>
                     <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
-                      <Link to={`/apps/${app.slug}`} className="flex items-center text-primary text-sm font-medium">
+                      <Link to={`/apps/${app.slug}`} className="flex items-center text-primary text-sm font-medium group/link">
                         View Details
-                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
                       </Link>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Github, Instagram, Linkedin, Mail } from "lucide-react";
 
 const footerLinks = {
@@ -27,38 +28,47 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-card/50 border-t border-border/50">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-card/50 border-t border-border/50 relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-2 group mb-4">
+              <div className="relative">
                 <img
                   src="/rscreationslogo.ico"
                   alt="RS Creations Tech Logo"
-                  className="w-5 h-5"
+                  className="w-9 h-9 rounded-lg transition-transform duration-300 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 rounded-lg bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
               </div>
-              <span className="font-semibold text-lg">RS Creations Tech</span>
+              <span className="font-semibold text-lg group-hover:text-primary transition-colors">RS Creations Tech</span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-md mb-6">
               Building innovative software solutions and sharing knowledge with the developer community.
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {socialLinks.map((link) => {
                 const isExternal = link.href.startsWith("http");
                 return (
-                <a
+                <motion.a
                   key={link.label}
                   href={link.href}
                   target={isExternal ? "_blank" : undefined}
                   rel={isExternal ? "noreferrer" : undefined}
-                  className="w-9 h-9 rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200 glow-on-hover"
                   aria-label={link.label}
                 >
                   <link.icon className="w-4 h-4" />
-                </a>
+                </motion.a>
                 );
               })}
             </div>
@@ -72,7 +82,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors hover:translate-x-1 inline-block"
                   >
                     {link.label}
                   </Link>
@@ -89,7 +99,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors hover:translate-x-1 inline-block"
                   >
                     {link.label}
                   </Link>
@@ -104,11 +114,17 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             © {currentYear} RS Creations Tech. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
-            Built with passion and modern technology.
+          <p className="text-sm text-muted-foreground flex items-center gap-2">
+            Built with 
+            <span className="text-primary">passion</span> 
+            <span className="text-primary/50">♥</span> 
+            and modern technology.
           </p>
         </div>
       </div>
+      
+      {/* Top gradient line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
     </footer>
   );
 }

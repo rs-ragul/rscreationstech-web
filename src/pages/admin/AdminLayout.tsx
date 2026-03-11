@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   BarChart3,
-  MessageSquare
+  MessageSquare,
+  Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/rscraft/projects", label: "Projects", icon: FolderGit2 },
   { href: "/rscraft/blog", label: "Blog Posts", icon: FileText },
   { href: "/rscraft/stats", label: "Stats", icon: BarChart3 },
+  { href: "/rscraft/home-content", label: "Home Content", icon: Sparkles },
   { href: "/rscraft/messages", label: "Messages", icon: MessageSquare },
 ];
 

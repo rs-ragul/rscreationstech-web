@@ -208,29 +208,53 @@ export type Database = {
       site_stats: {
         Row: {
           apps_count: number
+          apps_label: string
+          apps_suffix: string
           created_at: string
           downloads_count: number
+          learning_data: Json
+          skills_data: Json
           users_count: number
+          users_label: string
+          users_suffix: string
           id: string
           projects_count: number
+          projects_label: string
+          projects_suffix: string
           updated_at: string
         }
         Insert: {
           apps_count?: number
+          apps_label?: string
+          apps_suffix?: string
           created_at?: string
           downloads_count?: number
+          learning_data?: Json
+          skills_data?: Json
           users_count?: number
+          users_label?: string
+          users_suffix?: string
           id?: string
           projects_count?: number
+          projects_label?: string
+          projects_suffix?: string
           updated_at?: string
         }
         Update: {
           apps_count?: number
+          apps_label?: string
+          apps_suffix?: string
           created_at?: string
           downloads_count?: number
+          learning_data?: Json
+          skills_data?: Json
           users_count?: number
+          users_label?: string
+          users_suffix?: string
           id?: string
           projects_count?: number
+          projects_label?: string
+          projects_suffix?: string
           updated_at?: string
         }
         Relationships: []

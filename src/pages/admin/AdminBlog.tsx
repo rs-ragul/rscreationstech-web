@@ -116,21 +116,21 @@ const AdminBlog = () => {
               transition={{ delay: index * 0.05 }}
               className="glass-card p-6"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold truncate">{post.title}</h3>
+                    <h3 className="font-semibold truncate flex-1 min-w-0">{post.title}</h3>
                     {post.is_published ? (
-                      <span className="flex items-center gap-1 text-xs text-primary">
+                      <span className="flex items-center gap-1 text-xs text-primary flex-shrink-0">
                         <Eye className="w-3 h-3" /> Published
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
                         <EyeOff className="w-3 h-3" /> Draft
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground truncate">
+                  <p className="text-sm text-muted-foreground line-clamp-2 break-words">
                     {post.excerpt || "No excerpt"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">

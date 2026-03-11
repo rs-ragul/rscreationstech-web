@@ -63,7 +63,7 @@ const Projects = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
-                  className="glass-card p-6 hover:border-primary/30 transition-all duration-300 group"
+                  className="glass-card p-6 group glass-card-hover"
                 >
                   <Link to={`/projects/${project.slug}`} className="block">
                     {project.image_url && (
@@ -81,9 +81,9 @@ const Projects = () => {
                     <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
                       {project.description || "A project built with modern technologies."}
                     </p>
-                    <div className="flex items-center text-primary text-sm font-medium">
+                    <div className="flex items-center text-primary text-sm font-medium group/link">
                       View Details
-                      <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      <ExternalLink className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
                     </div>
                   </Link>
                   
@@ -91,7 +91,7 @@ const Projects = () => {
                   {project.tech_stack && project.tech_stack.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.tech_stack.map((tech) => (
-                        <Badge key={tech} variant="secondary" className="text-xs">
+                        <Badge key={tech} variant="secondary" className="text-xs bg-primary/10 border border-primary/30 text-primary">
                           {tech}
                         </Badge>
                       ))}
@@ -101,17 +101,17 @@ const Projects = () => {
                   {/* Links */}
                   <div className="flex items-center gap-3">
                     {project.github_url && (
-                      <Button variant="outline" size="sm" asChild>
+                      <Button variant="outline" size="sm" asChild className="group/btn">
                         <a href={project.github_url} target="_blank" rel="noopener noreferrer">
-                          <Github className="w-4 h-4 mr-1" />
+                          <Github className="w-4 h-4 mr-1 group-hover/btn:rotate-12 transition-transform" />
                           GitHub
                         </a>
                       </Button>
                     )}
                     {project.live_url && (
-                      <Button variant="outline" size="sm" asChild>
+                      <Button variant="outline" size="sm" asChild className="group/btn">
                         <a href={project.live_url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-1" />
+                          <ExternalLink className="w-4 h-4 mr-1 group-hover/btn:rotate-12 transition-transform" />
                           Live Demo
                         </a>
                       </Button>

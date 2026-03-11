@@ -68,8 +68,11 @@ export function FeaturedApps() {
   }
 
   return (
-    <section className="py-20 bg-card/30">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-card/30 relative">
+      {/* Background decorations */}
+      <div className="absolute inset-0 divider-grid opacity-30" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -100,7 +103,7 @@ export function FeaturedApps() {
             >
               <Link
                 to={`/apps/${app.slug}`}
-                className="block glass-card p-6 h-full hover:border-primary/30 transition-all duration-300 group"
+                className="block glass-card p-6 h-full group glass-card-hover"
               >
                 <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   {app.logo_url ? (
@@ -125,10 +128,10 @@ export function FeaturedApps() {
         </div>
 
         <div className="text-center">
-          <Button asChild variant="outline" size="lg">
+          <Button asChild variant="outline" size="lg" className="group">
             <Link to="/apps">
               View All Apps
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
         </div>

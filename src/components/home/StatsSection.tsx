@@ -27,27 +27,30 @@ export function StatsSection() {
 
   const statsData = [
     { 
-      label: "Apps Published", 
+      label: stats?.apps_label ?? "Apps Published", 
       value: stats?.apps_count ?? 0, 
       icon: "apps" as const,
-      suffix: "+"
+      suffix: stats?.apps_suffix ?? "+"
     },
     { 
-      label: "Projects Built", 
+      label: stats?.projects_label ?? "Projects Built", 
       value: stats?.projects_count ?? 0, 
       icon: "projects" as const,
-      suffix: "+"
+      suffix: stats?.projects_suffix ?? "+"
     },
     {
-      label: "Active Users",
+      label: stats?.users_label ?? "Active Users",
       value: stats?.users_count ?? 0,
       icon: "users" as const,
-      suffix: "+"
+      suffix: stats?.users_suffix ?? "+"
     },
   ];
 
   return (
     <section className="py-20 relative">
+      {/* Background glow */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent opacity-50" />
+      
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -74,14 +77,20 @@ export function StatsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="stat-card text-center group"
+                className="stat-card text-center group glow-on-hover cursor-default"
               >
                 <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <Icon className="w-7 h-7 text-primary" />
                 </div>
-                <div className="text-4xl font-bold mb-2">
+                <motion.div 
+                  className="text-4xl font-bold mb-2 gradient-text"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                >
                   {stat.value.toLocaleString()}{stat.suffix}
-                </div>
+                </motion.div>
                 <div className="text-muted-foreground text-sm">{stat.label}</div>
               </motion.div>
             );

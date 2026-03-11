@@ -109,10 +109,10 @@ const AdminProjects = () => {
               transition={{ delay: index * 0.05 }}
               className="glass-card p-6"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <h3 className="font-semibold truncate">{project.name}</h3>
-                  <p className="text-sm text-muted-foreground truncate">
+                  <p className="text-sm text-muted-foreground line-clamp-2 break-words">
                     {project.description || "No description"}
                   </p>
                   {project.tech_stack && project.tech_stack.length > 0 && (

@@ -31,6 +31,7 @@ import AdminBlog from "./pages/admin/AdminBlog";
 import AdminBlogForm from "./pages/admin/AdminBlogForm";
 import AdminStats from "./pages/admin/AdminStats";
 import AdminMessages from "./pages/admin/AdminMessages";
+import AdminHomeContent from "./pages/admin/AdminHomeContent";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="blog" element={<AdminBlog />} />
             <Route path="blog/:id" element={<AdminBlogForm />} />
             <Route path="stats" element={<AdminStats />} />
+            <Route path="home-content" element={<AdminHomeContent />} />
             <Route path="messages" element={<AdminMessages />} />
           </Route>
 

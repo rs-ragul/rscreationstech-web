@@ -29,6 +29,12 @@ const AdminStats = () => {
     apps_count: 0,
     projects_count: 0,
     users_count: 0,
+    apps_label: "Apps Published",
+    projects_label: "Projects Built",
+    users_label: "Active Users",
+    apps_suffix: "+",
+    projects_suffix: "+",
+    users_suffix: "+",
   });
 
   // Update form when data loads
@@ -38,6 +44,12 @@ const AdminStats = () => {
         apps_count: stats.apps_count || 0,
         projects_count: stats.projects_count || 0,
         users_count: stats.users_count || 0,
+        apps_label: stats.apps_label || "Apps Published",
+        projects_label: stats.projects_label || "Projects Built",
+        users_label: stats.users_label || "Active Users",
+        apps_suffix: stats.apps_suffix || "+",
+        projects_suffix: stats.projects_suffix || "+",
+        users_suffix: stats.users_suffix || "+",
       });
     }
   }, [stats]);
@@ -109,6 +121,26 @@ const AdminStats = () => {
           />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="apps_label">Apps Label</Label>
+            <Input
+              id="apps_label"
+              value={formData.apps_label}
+              onChange={(e) => setFormData({ ...formData, apps_label: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="apps_suffix">Apps Suffix</Label>
+            <Input
+              id="apps_suffix"
+              value={formData.apps_suffix}
+              onChange={(e) => setFormData({ ...formData, apps_suffix: e.target.value })}
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="projects_count">Projects Count</Label>
           <Input
@@ -120,6 +152,26 @@ const AdminStats = () => {
           />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="projects_label">Projects Label</Label>
+            <Input
+              id="projects_label"
+              value={formData.projects_label}
+              onChange={(e) => setFormData({ ...formData, projects_label: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="projects_suffix">Projects Suffix</Label>
+            <Input
+              id="projects_suffix"
+              value={formData.projects_suffix}
+              onChange={(e) => setFormData({ ...formData, projects_suffix: e.target.value })}
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="users_count">Active Users</Label>
           <Input
@@ -129,6 +181,26 @@ const AdminStats = () => {
             onChange={(e) => setFormData({ ...formData, users_count: parseInt(e.target.value) || 0 })}
             min={0}
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="users_label">Users Label</Label>
+            <Input
+              id="users_label"
+              value={formData.users_label}
+              onChange={(e) => setFormData({ ...formData, users_label: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="users_suffix">Users Suffix</Label>
+            <Input
+              id="users_suffix"
+              value={formData.users_suffix}
+              onChange={(e) => setFormData({ ...formData, users_suffix: e.target.value })}
+            />
+          </div>
         </div>
 
         <Button type="submit" className="w-full glow-primary" disabled={updateMutation.isPending}>
