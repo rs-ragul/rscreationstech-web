@@ -6,6 +6,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Seo } from "@/components/seo/Seo";
 
 const Apps = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +31,11 @@ const Apps = () => {
 
   return (
     <Layout>
+      <Seo
+        title="Apps"
+        description="Explore apps by Ragul S at RS Creations Tech, focused on practical utility, performance, and clean user experience."
+        path="/apps"
+      />
       <section className="py-20 min-h-screen">
         <div className="container mx-auto px-4">
           {/* Header */}

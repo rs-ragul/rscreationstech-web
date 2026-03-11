@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Seo } from "@/components/seo/Seo";
 
 const Projects = () => {
   const { data: projects, isLoading } = useQuery({
@@ -23,6 +24,11 @@ const Projects = () => {
 
   return (
     <Layout>
+      <Seo
+        title="Projects"
+        description="Browse software projects built by Ragul S at RS Creations Tech, including web applications, experiments, and open-source work."
+        path="/projects"
+      />
       <section className="py-20 min-h-screen">
         <div className="container mx-auto px-4">
           {/* Header */}

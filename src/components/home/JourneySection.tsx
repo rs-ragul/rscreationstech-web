@@ -10,7 +10,7 @@ const journeyPoints = [
   {
     icon: <Code2 className="w-6 h-6" />,
     title: "Learning to Build",
-    description: "I started learning programming fundamentals - HTML, CSS, JavaScript, and then moved on to more complex technologies. Building my first applications gave me a sense of accomplishment that motivated me to learn more and build better.",
+    description: "I started learning programming fundamentals - Python, C, C++, and then moved on to more complex technologies. Building my first applications gave me a sense of accomplishment that motivated me to learn more and build better.",
   },
   {
     icon: <Lightbulb className="w-6 h-6" />,

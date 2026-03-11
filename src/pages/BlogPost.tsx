@@ -5,6 +5,20 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Seo } from "@/components/seo/Seo";
+
+const getSiteUrl = () => {
+  const configured = import.meta.env.VITE_SITE_URL as string | undefined;
+  if (configured && configured.trim().length > 0) {
+    return configured.replace(/\/$/, "");
+  }
+
+  if (typeof window !== "undefined" && window.location.origin) {
+    return window.location.origin;
+  }
+
+  return "https://rscreationstech.com";
+};
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -75,6 +89,33 @@ const BlogPost = () => {
 
   return (
     <Layout>
+      {post && (
+        <Seo
+          title={post.title}
+          description={post.excerpt || "Article by Ragul S on RS Creations Tech."}
+          path={`/blog/${post.slug}`}
+          type="article"
+          image={post.cover_image_url || undefined}
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt || "Technical article by Ragul S",
+            datePublished: post.published_at || post.created_at,
+            dateModified: post.updated_at,
+            author: {
+              "@type": "Person",
+              name: "Ragul S",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "RS Creations Tech",
+            },
+            mainEntityOfPage: `${getSiteUrl()}/blog/${post.slug}`,
+            image: post.cover_image_url || `${getSiteUrl()}/rscreationslogo.ico`,
+          }}
+        />
+      )}
       <article className="py-20 min-h-screen">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">

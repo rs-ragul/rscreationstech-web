@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { Code2, Zap, Target, Heart } from "lucide-react";
+import { Seo } from "@/components/seo/Seo";
 
 const techStack = [
   "React, TypeScript, Tailwind CSS",
@@ -13,6 +14,25 @@ const techStack = [
 const About = () => {
   return (
     <Layout>
+      <Seo
+        title="About Ragul S"
+        description="Learn about Ragul S from RS Creations Tech, studying Computer Science and Engineering with Cyber Security specialization at PSNA College of Engineering and Technology."
+        path="/about"
+        type="profile"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          mainEntity: {
+            "@type": "Person",
+            name: "Ragul S",
+            alumniOf: {
+              "@type": "CollegeOrUniversity",
+              name: "PSNA College of Engineering and Technology",
+            },
+            knowsAbout: ["Cybersecurity", "React", "TypeScript", "Software Development"],
+          },
+        }}
+      />
       <section className="py-20 min-h-screen">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
@@ -45,7 +65,7 @@ const About = () => {
                 <h2 className="text-2xl font-semibold">My Story</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                I’m RS, currently studying Computer Science and Engineering with Cyber Security Specialization.
+                I’m Ragul S, currently studying Computer Science and Engineering with Cyber Security Specialization.
               </p>
               <p className="text-muted-foreground leading-relaxed mt-4">
                 I didn’t start with a clear plan to become a developer or a cybersecurity professional. Like many people, my interest in technology grew gradually. At first, it was just curiosity — using computers, exploring software, and wanting to understand how things work instead of only using them.

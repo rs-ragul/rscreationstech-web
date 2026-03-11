@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Calendar, ArrowRight, FileText } from "lucide-react";
+import { Seo } from "@/components/seo/Seo";
 
 const Blog = () => {
   const { data: posts, isLoading } = useQuery({
@@ -30,6 +31,11 @@ const Blog = () => {
 
   return (
     <Layout>
+      <Seo
+        title="Blog"
+        description="Read articles and technical notes by Ragul S on software development, practical engineering, and cybersecurity learning."
+        path="/blog"
+      />
       <section className="py-20 min-h-screen">
         <div className="container mx-auto px-4">
           {/* Header */}

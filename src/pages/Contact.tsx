@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Send, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Seo } from "@/components/seo/Seo";
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,6 +50,11 @@ const Contact = () => {
 
   return (
     <Layout>
+      <Seo
+        title="Contact"
+        description="Contact Ragul S from RS Creations Tech for collaboration, project discussions, or technical conversations."
+        path="/contact"
+      />
       <section className="py-20 min-h-screen">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
