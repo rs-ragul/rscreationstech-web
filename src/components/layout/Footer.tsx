@@ -114,12 +114,6 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             © {currentYear} RS Creations Tech. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground flex items-center gap-2">
-            Built with 
-            <span className="text-primary">passion</span> 
-            <span className="text-primary/50">♥</span> 
-            and modern technology.
-          </p>
         </div>
       </div>
       
