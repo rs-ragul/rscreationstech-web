@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Seo } from "@/components/seo/Seo";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const getSiteUrl = () => {
   const configured = import.meta.env.VITE_SITE_URL as string | undefined;
@@ -202,9 +204,16 @@ const BlogPost = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="prose prose-invert prose-lg max-w-none"
             >
-              <div className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                {post.content}
-              </div>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ node: _node, ...props }) => (
+                    <a {...props} target="_blank" rel="noreferrer" />
+                  ),
+                }}
+              >
+                {post.content || ""}
+              </ReactMarkdown>
             </motion.div>
           </div>
         </div>

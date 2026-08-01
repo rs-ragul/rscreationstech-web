@@ -145,6 +145,23 @@ const AdminBlogForm = () => {
     }));
   };
 
+  const makeImageCover = (indexToPromote: number) => {
+    setFormData((prev) => {
+      if (indexToPromote === 0 || indexToPromote >= prev.cover_image_urls.length) {
+        return prev;
+      }
+
+      const nextCoverImages = [...prev.cover_image_urls];
+      const [selectedImage] = nextCoverImages.splice(indexToPromote, 1);
+      nextCoverImages.unshift(selectedImage);
+
+      return {
+        ...prev,
+        cover_image_urls: nextCoverImages,
+      };
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
@@ -252,6 +269,21 @@ const AdminBlogForm = () => {
                       alt={`Uploaded cover ${index + 1}`}
                       className="w-full h-24 object-cover rounded-md border"
                     />
+                    <div className="absolute left-1 top-1 flex gap-2">
+                      {index === 0 ? (
+                        <span className="rounded-full bg-primary px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
+                          Cover
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => makeImageCover(index)}
+                          className="rounded-full bg-background/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-foreground shadow-sm transition-colors hover:bg-background"
+                        >
+                          Make cover
+                        </button>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
