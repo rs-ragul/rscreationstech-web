@@ -67,7 +67,10 @@ const Blog = () => {
             </div>
           ) : posts && posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {posts.map((post, index) => (
+              {posts.map((post, index) => {
+                const coverImage = post.cover_image_urls?.[0] || post.cover_image_url;
+
+                return (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -78,10 +81,10 @@ const Blog = () => {
                     to={`/blog/${post.slug}`}
                     className="block glass-card overflow-hidden hover:border-primary/30 transition-all duration-300 group h-full"
                   >
-                    {post.cover_image_url && (
+                    {coverImage && (
                       <div className="aspect-video overflow-hidden">
                         <img
-                          src={post.cover_image_url}
+                          src={coverImage}
                           alt={post.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
@@ -109,7 +112,8 @@ const Blog = () => {
                     </div>
                   </Link>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <motion.div

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar } from "lucide-react";
@@ -47,6 +48,28 @@ const BlogPost = () => {
     });
   };
 
+  const imageUrls =
+    post?.cover_image_urls && post.cover_image_urls.length > 0
+      ? post.cover_image_urls
+      : post?.cover_image_url
+        ? [post.cover_image_url]
+        : [];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [post?.id]);
+
+  useEffect(() => {
+    if (imageUrls.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % imageUrls.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, [imageUrls.length]);
+
   if (isLoading) {
     return (
       <Layout>
@@ -95,7 +118,7 @@ const BlogPost = () => {
           description={post.excerpt || "Article by Ragul S on RS Creations Tech."}
           path={`/blog/${post.slug}`}
           type="article"
-          image={post.cover_image_url || undefined}
+          image={imageUrls[0] || undefined}
           jsonLd={{
             "@context": "https://schema.org",
             "@type": "BlogPosting",
@@ -112,7 +135,7 @@ const BlogPost = () => {
               name: "RS Creations Tech",
             },
             mainEntityOfPage: `${getSiteUrl()}/blog/${post.slug}`,
-            image: post.cover_image_url || `${getSiteUrl()}/rscreationslogo.ico`,
+            image: imageUrls[0] || `${getSiteUrl()}/rscreationslogo.ico`,
           }}
         />
       )}
@@ -140,13 +163,25 @@ const BlogPost = () => {
               transition={{ duration: 0.5 }}
               className="mb-8"
             >
-              {post.cover_image_url && (
-                <div className="aspect-video rounded-xl overflow-hidden mb-8">
+              {imageUrls.length > 0 && (
+                <div className="aspect-video rounded-xl overflow-hidden mb-8 relative">
                   <img
-                    src={post.cover_image_url}
+                    src={imageUrls[currentImageIndex]}
                     alt={post.title}
                     className="w-full h-full object-cover"
                   />
+                  {imageUrls.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                      {imageUrls.map((_, index) => (
+                        <span
+                          key={index}
+                          className={`h-2 w-2 rounded-full ${
+                            currentImageIndex === index ? "bg-white" : "bg-white/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
