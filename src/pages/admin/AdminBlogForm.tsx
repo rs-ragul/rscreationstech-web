@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,10 +23,11 @@ const AdminBlogForm = () => {
     slug: "",
     excerpt: "",
     content: "",
-    cover_image_url: "",
+    cover_image_urls: [] as string[],
     is_published: false,
     published_at: null as string | null,
   });
+  const [imagesUploading, setImagesUploading] = useState(false);
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["admin-blog-post", id],
@@ -50,7 +51,11 @@ const AdminBlogForm = () => {
         slug: post.slug || "",
         excerpt: post.excerpt || "",
         content: post.content || "",
-        cover_image_url: post.cover_image_url || "",
+        cover_image_urls: post.cover_image_urls?.length
+          ? post.cover_image_urls
+          : post.cover_image_url
+            ? [post.cover_image_url]
+            : [],
         is_published: post.is_published || false,
         published_at: post.published_at,
       });
@@ -70,6 +75,7 @@ const AdminBlogForm = () => {
     mutationFn: async () => {
       const dataToSave = {
         ...formData,
+        cover_image_url: formData.cover_image_urls[0] || null,
         published_at: formData.is_published && !formData.published_at 
           ? new Date().toISOString() 
           : formData.published_at,
@@ -92,6 +98,52 @@ const AdminBlogForm = () => {
       toast({ title: "Failed to save post", description: error.message, variant: "destructive" });
     },
   });
+
+  const uploadImages = async (files: FileList) => {
+    try {
+      setImagesUploading(true);
+      const uploadedUrls: string[] = [];
+
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith("image/")) continue;
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
+        const filePath = `blog/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("app-assets")
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage.from("app-assets").getPublicUrl(filePath);
+        uploadedUrls.push(data.publicUrl);
+      }
+
+      if (uploadedUrls.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          cover_image_urls: [...prev.cover_image_urls, ...uploadedUrls],
+        }));
+        toast({ title: "Images uploaded successfully" });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Failed to upload images",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setImagesUploading(false);
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      cover_image_urls: prev.cover_image_urls.filter((_, index) => index !== indexToRemove),
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -170,13 +222,42 @@ const AdminBlogForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cover_image_url">Cover Image URL</Label>
-            <Input
-              id="cover_image_url"
-              value={formData.cover_image_url}
-              onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-              placeholder="https://..."
-            />
+            <Label htmlFor="cover_images">Cover Images</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="cover_images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => e.target.files && uploadImages(e.target.files)}
+                disabled={imagesUploading}
+              />
+              {imagesUploading ? (
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+              ) : (
+                <Upload className="w-5 h-5 text-muted-foreground" />
+              )}
+            </div>
+            {formData.cover_image_urls.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-1">
+                {formData.cover_image_urls.map((imageUrl, index) => (
+                  <div key={imageUrl} className="relative group">
+                    <img
+                      src={imageUrl}
+                      alt={`Uploaded cover ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-md border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
