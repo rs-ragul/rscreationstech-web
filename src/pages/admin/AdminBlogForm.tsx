@@ -106,7 +106,7 @@ const AdminBlogForm = () => {
 
       for (const file of Array.from(files)) {
         if (!file.type.startsWith("image/")) continue;
-        const fileExt = file.name.split(".").pop();
+        const fileExt = file.name.split(".").pop() || "jpg";
         const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
         const filePath = `blog/${fileName}`;
 
@@ -229,7 +229,12 @@ const AdminBlogForm = () => {
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={(e) => e.target.files && uploadImages(e.target.files)}
+                onChange={(e) => {
+                  if (e.target.files) {
+                    uploadImages(e.target.files);
+                    e.target.value = "";
+                  }
+                }}
                 disabled={imagesUploading}
               />
               {imagesUploading ? (
@@ -241,7 +246,7 @@ const AdminBlogForm = () => {
             {formData.cover_image_urls.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-1">
                 {formData.cover_image_urls.map((imageUrl, index) => (
-                  <div key={imageUrl} className="relative group">
+                  <div key={`${imageUrl}-${index}`} className="relative group">
                     <img
                       src={imageUrl}
                       alt={`Uploaded cover ${index + 1}`}
