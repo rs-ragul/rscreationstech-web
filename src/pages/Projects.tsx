@@ -7,8 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Seo } from "@/components/seo/Seo";
+import { useEffect, useState } from "react";
 
 const Projects = () => {
+  const [currentProjectImageIndex, setCurrentProjectImageIndex] = useState<Record<string, number>>({});
+
   const { data: projects, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -21,6 +24,35 @@ const Projects = () => {
       return data;
     },
   });
+
+  useEffect(() => {
+    if (!projects || projects.length === 0) return;
+
+    const interval = window.setInterval(() => {
+      setCurrentProjectImageIndex((prev) => {
+        const nextState: Record<string, number> = {};
+
+        for (const project of projects) {
+          const imageUrls = project.image_urls?.length
+            ? project.image_urls
+            : project.image_url
+              ? [project.image_url]
+              : [];
+
+          if (imageUrls.length > 1) {
+            const currentIndex = prev[project.id] ?? 0;
+            nextState[project.id] = (currentIndex + 1) % imageUrls.length;
+          } else if (imageUrls.length === 1) {
+            nextState[project.id] = 0;
+          }
+        }
+
+        return nextState;
+      });
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, [projects]);
 
   return (
     <Layout>
@@ -72,13 +104,31 @@ const Projects = () => {
                   className="glass-card p-6 group glass-card-hover"
                 >
                   <Link to={`/projects/${project.slug}`} className="block">
-                    {project.image_url && (
-                      <div className="mb-4 rounded-lg overflow-hidden">
+                    {((project.image_urls && project.image_urls.length > 0) || project.image_url) && (
+                      <div className="mb-4 rounded-lg overflow-hidden relative">
                         <img
-                          src={project.image_url}
+                          src={
+                            (project.image_urls?.length
+                              ? project.image_urls[currentProjectImageIndex[project.id] ?? 0]
+                              : project.image_url) || ""
+                          }
                           alt={project.name}
                           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
                         />
+                        {(project.image_urls?.length || 0) > 1 && (
+                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                            {project.image_urls!.map((_, dotIndex) => (
+                              <span
+                                key={dotIndex}
+                                className={`h-2 w-2 rounded-full ${
+                                  (currentProjectImageIndex[project.id] ?? 0) === dotIndex
+                                    ? "bg-white"
+                                    : "bg-white/50"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                     <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">

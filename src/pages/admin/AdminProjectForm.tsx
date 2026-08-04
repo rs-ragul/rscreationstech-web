@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Save, Plus, X } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Plus, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,8 +25,10 @@ const AdminProjectForm = () => {
     github_url: "",
     live_url: "",
     image_url: "",
+    image_urls: [] as string[],
   });
   const [newTech, setNewTech] = useState("");
+  const [imagesUploading, setImagesUploading] = useState(false);
 
   const { data: project, isLoading } = useQuery({
     queryKey: ["admin-project", id],
@@ -53,6 +55,11 @@ const AdminProjectForm = () => {
         github_url: project.github_url || "",
         live_url: project.live_url || "",
         image_url: project.image_url || "",
+        image_urls: project.image_urls?.length
+          ? project.image_urls
+          : project.image_url
+            ? [project.image_url]
+            : [],
       });
     }
   }, [project]);
@@ -68,11 +75,16 @@ const AdminProjectForm = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const dataToSave = {
+        ...formData,
+        image_url: formData.image_urls[0] || null,
+      };
+
       if (isEditing) {
-        const { error } = await supabase.from("projects").update(formData).eq("id", id);
+        const { error } = await supabase.from("projects").update(dataToSave).eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("projects").insert([formData]);
+        const { error } = await supabase.from("projects").insert([dataToSave]);
         if (error) throw error;
       }
     },
@@ -101,6 +113,76 @@ const AdminProjectForm = () => {
       ...prev,
       tech_stack: prev.tech_stack.filter((_, i) => i !== index),
     }));
+  };
+
+  const uploadImages = async (files: FileList) => {
+    try {
+      setImagesUploading(true);
+      const uploadedUrls: string[] = [];
+
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith("image/")) continue;
+        const fileExt = file.name.split(".").pop() || "jpg";
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
+        const filePath = `project/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("app-assets")
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage.from("app-assets").getPublicUrl(filePath);
+        uploadedUrls.push(data.publicUrl);
+      }
+
+      if (uploadedUrls.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          image_urls: [...prev.image_urls, ...uploadedUrls],
+          image_url: prev.image_urls[0] || uploadedUrls[0] || "",
+        }));
+        toast({ title: "Images uploaded successfully" });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Failed to upload images",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setImagesUploading(false);
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setFormData((prev) => {
+      const nextImages = prev.image_urls.filter((_, index) => index !== indexToRemove);
+
+      return {
+        ...prev,
+        image_urls: nextImages,
+        image_url: nextImages[0] || "",
+      };
+    });
+  };
+
+  const makeImageCover = (indexToPromote: number) => {
+    setFormData((prev) => {
+      if (indexToPromote === 0 || indexToPromote >= prev.image_urls.length) {
+        return prev;
+      }
+
+      const nextImages = [...prev.image_urls];
+      const [selectedImage] = nextImages.splice(indexToPromote, 1);
+      nextImages.unshift(selectedImage);
+
+      return {
+        ...prev,
+        image_urls: nextImages,
+        image_url: nextImages[0] || "",
+      };
+    });
   };
 
   if (isLoading) {
@@ -204,13 +286,63 @@ const AdminProjectForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image_url">Image URL</Label>
-            <Input
-              id="image_url"
-              value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="https://..."
-            />
+            <Label htmlFor="project_images">Project Images</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="project_images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  if (e.target.files) {
+                    uploadImages(e.target.files);
+                    e.target.value = "";
+                  }
+                }}
+                disabled={imagesUploading}
+              />
+              {imagesUploading ? (
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+              ) : (
+                <Upload className="w-5 h-5 text-muted-foreground" />
+              )}
+            </div>
+
+            {formData.image_urls.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-1">
+                {formData.image_urls.map((imageUrl, index) => (
+                  <div key={`${imageUrl}-${index}`} className="relative group">
+                    <img
+                      src={imageUrl}
+                      alt={`Uploaded project ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-md border"
+                    />
+                    <div className="absolute left-1 top-1 flex gap-2">
+                      {index === 0 ? (
+                        <span className="rounded-full bg-primary px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
+                          Cover
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => makeImageCover(index)}
+                          className="rounded-full bg-background/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-foreground shadow-sm transition-colors hover:bg-background"
+                        >
+                          Make cover
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

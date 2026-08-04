@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ExternalLink, Github, FolderGit2 } from "lucide-react";
@@ -9,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const ProjectDetails = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { data: project, isLoading } = useQuery({
     queryKey: ["project", slug],
@@ -24,6 +26,26 @@ const ProjectDetails = () => {
     },
     enabled: !!slug,
   });
+
+  const imageUrls = project?.image_urls && project.image_urls.length > 0
+    ? project.image_urls
+    : project?.image_url
+      ? [project.image_url]
+      : [];
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [project?.id]);
+
+  useEffect(() => {
+    if (imageUrls.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % imageUrls.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, [imageUrls.length]);
 
   if (isLoading) {
     return (
@@ -85,13 +107,25 @@ const ProjectDetails = () => {
               transition={{ duration: 0.5 }}
               className="glass-card p-6 md:p-8"
             >
-              {project.image_url ? (
-                <div className="mb-6 rounded-xl overflow-hidden">
+              {imageUrls.length > 0 ? (
+                <div className="mb-6 rounded-xl overflow-hidden relative">
                   <img
-                    src={project.image_url}
+                    src={imageUrls[currentImageIndex]}
                     alt={project.name}
                     className="w-full h-64 md:h-80 object-cover"
                   />
+                  {imageUrls.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                      {imageUrls.map((_, index) => (
+                        <span
+                          key={index}
+                          className={`h-2 w-2 rounded-full ${
+                            currentImageIndex === index ? "bg-white" : "bg-white/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="mb-6 w-full h-64 md:h-80 rounded-xl bg-muted flex items-center justify-center">
