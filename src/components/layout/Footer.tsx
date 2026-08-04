@@ -20,7 +20,7 @@ const footerLinks = {
 const socialLinks = [
   { href: "https://github.com/rs-ragul", icon: Github, label: "GitHub" },
   { href: "https://www.instagram.com/rscreations.tech/", icon: Instagram, label: "Instagram" },
-  { href: "https://www.linkedin.com/in/ragulethicalhacker/", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://www.linkedin.com/in/ragul-rs/", icon: Linkedin, label: "LinkedIn" },
   { href: "mailto:rscreations.tech@gmail.com", icon: Mail, label: "Email" },
 ];
 
