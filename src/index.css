@@ -63,10 +63,7 @@
   body {
     @apply text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: 
-      radial-gradient(ellipse at top, hsl(225 45% 10%) 0%, hsl(225 50% 5%) 100%),
-      hsl(225 50% 5%);
-    background-attachment: fixed;
+    background: hsl(225 50% 3%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -93,12 +90,12 @@
     position: relative;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.02) 100%
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
     );
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 1rem;
     box-shadow:
       0 8px 32px 0 rgba(0, 0, 0, 0.37),
@@ -115,7 +112,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.3),
       transparent
     );
     border-radius: inherit;
@@ -129,15 +126,15 @@
   .glass-card-hover:hover {
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(255, 255, 255, 0.04) 100%
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.08) 100%
     );
-    border-color: rgba(103, 232, 249, 0.3);
+    border-color: rgba(103, 232, 249, 0.5);
     box-shadow:
-      0 0 0 1px rgba(103, 232, 249, 0.1),
-      0 20px 60px -20px rgba(103, 232, 249, 0.2),
-      0 0 60px -10px rgba(103, 232, 249, 0.1),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+      0 0 0 1px rgba(103, 232, 249, 0.2),
+      0 20px 60px -20px rgba(103, 232, 249, 0.3),
+      0 0 60px -10px rgba(103, 232, 249, 0.2),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
     transform: translateY(-6px);
   }
 
@@ -365,6 +362,7 @@
 
   /* ─── Animation Classes ─── */
   .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-pulse-slow { animation: float 8s ease-in-out infinite; }
   .animate-grid-pulse { animation: grid-pulse 4s ease-in-out infinite; }
   .animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
   .animate-morph { animation: morph 8s ease-in-out infinite; }
