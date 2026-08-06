@@ -86,10 +86,10 @@ export function StatsSection() {
       suffix: stats?.projects_suffix ?? "+",
     },
     {
-      label: "Technologies",
-      value: 15,
+      label: stats?.users_label ?? "Technologies",
+      value: stats?.users_count ?? 15,
       icon: "downloads" as const,
-      suffix: "+",
+      suffix: stats?.users_suffix ?? "+",
     },
   ];
 
