@@ -33,11 +33,11 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-card/50 border-t border-border/30 relative overflow-hidden">
-      {/* Background glow */}
+    <footer className="bg-[#060a12] border-t border-border/30 relative overflow-hidden">
+      {/* Subtle accent */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/3 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-primary/3 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 py-12 relative z-10">
