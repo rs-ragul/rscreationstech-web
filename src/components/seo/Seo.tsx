@@ -11,9 +11,10 @@ interface SeoProps {
   type?: SeoType;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  keywords?: string;
 }
 
-const SITE_NAME = "RS Creations Tech";
+const SITE_NAME = "Ragul S - Portfolio";
 const DEFAULT_IMAGE = "/rscreationslogo.ico";
 
 const getSiteUrl = () => {
@@ -63,6 +64,7 @@ export function Seo({
   type = "website",
   noindex = false,
   jsonLd,
+  keywords,
 }: SeoProps) {
   const location = useLocation();
 
@@ -72,23 +74,28 @@ export function Seo({
     const canonicalUrl = `${siteUrl}${pagePath.startsWith("/") ? pagePath : `/${pagePath}`}`;
     const imageUrl = image.startsWith("http") ? image : `${siteUrl}${image.startsWith("/") ? image : `/${image}`}`;
 
-    document.title = `${title} | ${SITE_NAME}`;
+    document.title = `${title} | Ragul S - Full Stack Developer & Cybersecurity Enthusiast`;
 
     upsertMeta('meta[name="description"]', { name: "description", content: description });
     upsertMeta('meta[name="author"]', { name: "author", content: "Ragul S" });
     upsertMeta('meta[name="robots"]', {
       name: "robots",
-      content: noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large",
+      content: noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1",
     });
 
-    upsertMeta('meta[property="og:title"]', { property: "og:title", content: `${title} | ${SITE_NAME}` });
+    if (keywords) {
+      upsertMeta('meta[name="keywords"]', { name: "keywords", content: keywords });
+    }
+
+    upsertMeta('meta[property="og:title"]', { property: "og:title", content: `${title} | Ragul S` });
     upsertMeta('meta[property="og:description"]', { property: "og:description", content: description });
     upsertMeta('meta[property="og:type"]', { property: "og:type", content: type });
     upsertMeta('meta[property="og:url"]', { property: "og:url", content: canonicalUrl });
     upsertMeta('meta[property="og:image"]', { property: "og:image", content: imageUrl });
+    upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: SITE_NAME });
 
     upsertMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
-    upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: `${title} | ${SITE_NAME}` });
+    upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: `${title} | Ragul S` });
     upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
     upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: imageUrl });
 
@@ -108,7 +115,7 @@ export function Seo({
         document.head.appendChild(script);
       });
     }
-  }, [description, image, jsonLd, location.pathname, noindex, path, title]);
+  }, [description, image, jsonLd, keywords, location.pathname, noindex, path, title, type]);
 
   return null;
 }

@@ -1,5 +1,9 @@
+User-agent: *
+Allow: /
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 0
 
 User-agent: Bingbot
 Allow: /
@@ -10,5 +14,8 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
 Allow: /
+
+# Sitemap
+Sitemap: https://rscreationstech.vercel.app/sitemap.xml

@@ -32,26 +32,33 @@ export function Navbar() {
   }, [location.pathname]);
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? "bg-background/90 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5" 
-          : "bg-background/50 backdrop-blur-sm border-transparent"
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-background/80 backdrop-blur-2xl border-b border-border/30 shadow-lg shadow-primary/5"
+          : "bg-transparent border-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative">
-              <img 
-                src="/rscreationslogo.ico" 
-                alt="RS Creations Tech Logo" 
+              <img
+                src="/rscreationslogo.ico"
+                alt="Ragul S - Portfolio"
                 className="w-9 h-9 rounded-lg transition-all duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 rounded-lg bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
             </div>
-            <span className="font-semibold text-lg group-hover:text-primary transition-colors">RS Creations Tech</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-base leading-tight group-hover:text-primary transition-colors">
+                Ragul S
+              </span>
+              <span className="text-[10px] text-muted-foreground leading-tight hidden sm:block">
+                Developer & Creator
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -60,9 +67,9 @@ export function Navbar() {
               <Link
                 key={link.href}
                 to={link.href}
-                className={`nav-link text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
-                  location.pathname === link.href 
-                    ? "text-primary bg-primary/10" 
+                className={`nav-link text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 relative ${
+                  location.pathname === link.href
+                    ? "text-primary bg-primary/10"
                     : "hover:bg-muted/50"
                 }`}
               >
@@ -102,8 +109,8 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border/50"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden bg-background/95 backdrop-blur-2xl border-b border-border/30"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
               {navLinks.map((link, index) => (
@@ -116,7 +123,7 @@ export function Navbar() {
                   <Link
                     to={link.href}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors touch-target ${
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 touch-target ${
                       location.pathname === link.href
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted"

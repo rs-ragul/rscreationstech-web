@@ -48,15 +48,14 @@ const normalizeLearningData = (value: unknown): LearningItem[] => {
       const title = typeof candidate.title === "string" ? candidate.title.trim() : "";
       const description = typeof candidate.description === "string" ? candidate.description.trim() : "";
       const icon = typeof candidate.icon === "string" ? candidate.icon : "";
-      const progress = Number(candidate.progress);
 
-      if (!title || !description || !isLearningIconKey(icon) || Number.isNaN(progress)) return null;
+      if (!title || !description || !isLearningIconKey(icon)) return null;
 
       return {
         title,
         description,
         icon,
-        progress: Math.max(0, Math.min(100, Math.round(progress))),
+        progress: 0,
       } satisfies LearningItem;
     })
     .filter((item): item is LearningItem => Boolean(item));
@@ -82,12 +81,11 @@ const normalizeSkillsData = (value: unknown): SkillCategory[] => {
           if (!skill || typeof skill !== "object") return null;
           const skillCandidate = skill as Record<string, unknown>;
           const name = typeof skillCandidate.name === "string" ? skillCandidate.name.trim() : "";
-          const level = Number(skillCandidate.level);
-          if (!name || Number.isNaN(level)) return null;
+          if (!name) return null;
 
           return {
             name,
-            level: Math.max(0, Math.min(100, Math.round(level))),
+            level: 0,
           } satisfies SkillItem;
         })
         .filter((skill): skill is SkillItem => Boolean(skill));
@@ -203,7 +201,7 @@ const AdminHomeContent = () => {
         title: "",
         description: "",
         icon: "network",
-        progress: 50,
+        progress: 0,
       },
     ]);
   };
@@ -222,7 +220,7 @@ const AdminHomeContent = () => {
       {
         title: "",
         icon: "code2",
-        skills: [{ name: "", level: 50 }],
+        skills: [{ name: "", level: 0 }],
       },
     ]);
   };
@@ -238,7 +236,7 @@ const AdminHomeContent = () => {
   const addSkillItem = (categoryIndex: number) => {
     updateSkillCategory(categoryIndex, (category) => ({
       ...category,
-      skills: [...category.skills, { name: "", level: 50 }],
+      skills: [...category.skills, { name: "", level: 0 }],
     }));
   };
 
@@ -268,6 +266,7 @@ const AdminHomeContent = () => {
         }}
         className="glass-card p-6 space-y-6"
       >
+        {/* Currently Exploring Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -338,32 +337,17 @@ const AdminHomeContent = () => {
                     className="min-h-[90px]"
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Progress (%)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={100}
-                    value={item.progress}
-                    onChange={(e) =>
-                      updateLearningItem(index, (current) => ({
-                        ...current,
-                        progress: Math.max(0, Math.min(100, Number(e.target.value) || 0)),
-                      }))
-                    }
-                  />
-                </div>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Skills Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold">Skills & Technologies</h2>
-              <p className="text-xs text-muted-foreground">Manage skill categories and skill levels.</p>
+              <p className="text-xs text-muted-foreground">Manage skill categories and technologies.</p>
             </div>
             <Button type="button" variant="outline" onClick={addSkillCategory}>
               <Plus className="w-4 h-4 mr-2" />
@@ -430,7 +414,7 @@ const AdminHomeContent = () => {
 
                   {category.skills.map((skill, skillIndex) => (
                     <div key={`skill-${categoryIndex}-${skillIndex}`} className="grid grid-cols-1 md:grid-cols-12 gap-2">
-                      <div className="md:col-span-7">
+                      <div className="md:col-span-10">
                         <Input
                           placeholder="Skill name"
                           value={skill.name}
@@ -439,27 +423,6 @@ const AdminHomeContent = () => {
                               ...current,
                               skills: current.skills.map((s, i) =>
                                 i === skillIndex ? { ...s, name: e.target.value } : s,
-                              ),
-                            }))
-                          }
-                        />
-                      </div>
-                      <div className="md:col-span-3">
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={skill.level}
-                          onChange={(e) =>
-                            updateSkillCategory(categoryIndex, (current) => ({
-                              ...current,
-                              skills: current.skills.map((s, i) =>
-                                i === skillIndex
-                                  ? {
-                                      ...s,
-                                      level: Math.max(0, Math.min(100, Number(e.target.value) || 0)),
-                                    }
-                                  : s,
                               ),
                             }))
                           }

@@ -1,5 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
 import { HeroSection } from "@/components/home/HeroSection";
+import { WhatIDoSection } from "@/components/home/WhatIDoSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { FeaturedApps } from "@/components/home/FeaturedApps";
 import { SkillsSection } from "@/components/home/SkillsSection";
@@ -28,43 +29,60 @@ const Index = () => {
   return (
     <Layout>
       <Seo
-        title="RS Creations Tech"
-        description="Portfolio of Ragul S, student at PSNA College of Engineering and Technology, building apps, projects, and cybersecurity-focused solutions."
+        title="Ragul S - Full Stack Developer & Cybersecurity Enthusiast"
+        description="Portfolio of Ragul S — Full Stack Developer, Cybersecurity student at PSNA College of Engineering and Technology. Building secure web applications, exploring ethical hacking, and creating innovative software solutions."
         path="/"
+        type="profile"
+        keywords="Ragul S, Ragul, Ragul ethical hacker, Ragul cybersecurity, Ragul developer, Ragul S portfolio, full stack developer, ethical hacker, PSNA College, cybersecurity student, React developer, penetration testing, web developer"
         jsonLd={[
           {
             "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            dateCreated: "2025-01-01T00:00:00Z",
+            mainEntity: {
+              "@type": "Person",
+              name: "Ragul S",
+              alternateName: ["Ragul", "Ragul S"],
+              url: siteUrl,
+              jobTitle: "Full Stack Developer & Cybersecurity Enthusiast",
+              description:
+                "Full Stack Developer and Cybersecurity student at PSNA College of Engineering and Technology. Passionate about building secure web applications, ethical hacking, and creating innovative software solutions.",
+              alumniOf: [
+                {
+                  "@type": "EducationalOrganization",
+                  name: "Srinivasa Matriculation Hr Sec School, Kollidam",
+                },
+                {
+                  "@type": "CollegeOrUniversity",
+                  name: "PSNA College of Engineering and Technology",
+                },
+              ],
+              knowsAbout: [
+                "Cybersecurity",
+                "Ethical Hacking",
+                "Full Stack Development",
+                "React",
+                "TypeScript",
+                "Node.js",
+                "Python",
+                "Penetration Testing",
+                "Network Security",
+                "Web Development",
+              ],
+              sameAs: [
+                "https://github.com/rs-ragul",
+                "https://www.linkedin.com/in/ragul-rs/",
+                "https://www.instagram.com/rscreations.tech/",
+              ],
+            },
+          },
+          {
+            "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "RS Creations Tech",
+            name: "Ragul S - Portfolio",
+            alternateName: "RS Creations Tech",
             url: siteUrl,
             publisher: {
-              "@type": "Organization",
-              name: "RS Creations Tech",
-              url: siteUrl,
-            },
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: "Ragul S",
-            url: siteUrl,
-            jobTitle: "Student Developer",
-            affiliation: {
-              "@type": "CollegeOrUniversity",
-              name: "PSNA College of Engineering and Technology",
-            },
-            worksFor: {
-              "@type": "Organization",
-              name: "RS Creations Tech",
-            },
-            knowsAbout: ["Cybersecurity", "Software Development", "Web Development"],
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "RS Creations Tech",
-            url: siteUrl,
-            founder: {
               "@type": "Person",
               name: "Ragul S",
             },
@@ -72,6 +90,8 @@ const Index = () => {
         ]}
       />
       <HeroSection />
+      <WhatIDoSection />
+      <SectionDivider variant="glow" />
       <StatsSection />
       <SectionDivider variant="gradient" />
       <FeaturedApps />
